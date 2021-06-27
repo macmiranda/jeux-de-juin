@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: litecoin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: litecoin-svc
+  namespace: litecoin
+  labels:
+    app: litecoin
+spec:
+  ports:
+  - port: 9333
+    name: litecoin
+  clusterIP: None
+  selector:
+    app: litecoin
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: litecoin
+  namespace: litecoin
+spec:
+  selector:
+    matchLabels:
+      app: litecoin # has to match .spec.template.metadata.labels
+  serviceName: litecoin-svc
+  replicas: 3 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: litecoin # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: litecoin
+        image: quay.io/macmiranda/jeux-de-juin:0.18.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9333
+          name: litecoin
+        volumeMounts:
+        - name: litecoin-data
+          mountPath: /home/litecoin/.litecoin
+  volumeClaimTemplates:
+  - metadata:
+      name: litecoin-data
+    spec:
+      accessModes: ["ReadWriteMany"]
+      storageClassName: "my-storage-class"
+      volumeMode: Filesystem # needs concurrent access from many nodes
+      resources:
+        requests:
+          storage: 100Gi  # database current size ~ 51GB

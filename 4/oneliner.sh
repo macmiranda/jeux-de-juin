@@ -1,0 +1,1 @@
+o=`mktemp`; cd sample; echo -n '{' > $o; for i in * ; do if [ ! -z "$(ls -A $i)" ];then cd $i; echo -n \"$i\":{ >> $o; for j in *;do echo -n \"$j\": \"$(cat $j|sed -e '/^$/d' |tr [:upper:] [:lower:]|sed ':a;N;$!ba;s/\n/\\n/g')\", >> $o ; done; cd ..; echo -n '},' >> $o ;fi; done;echo -n '}' >> $o; cd ..; cat $o|sed 's/,}/}/g' |jq .; rm -f $o
