@@ -12,4 +12,4 @@ Write a simple build and deployment pipeline for [1](../1) and [2](../2) using g
     - `${REGISTRY_USER}` and `${REGISTRY_HOST}` could also have been configured as CI Pipeline Variables.
     - Gitlab Runners have access to the Kubernetes API.
     - Not using Helm to deploy since release management wasn't one of the requirements.
-- 2021-02-28 1:45pm UTC - Just found an issue in the CI configuration. The `release-job` has no access to the Docker daemon so the `docker push` will fail. Will need to re-work that one.
+- 2021-06-28 1:45pm UTC - Just found an issue in the CI configuration. The `release-job` has no access to the Docker daemon so the `docker push` will fail. Will need to re-work that one.
